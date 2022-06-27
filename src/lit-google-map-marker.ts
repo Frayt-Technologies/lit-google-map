@@ -115,24 +115,28 @@ export class LitGoogleMapMarker extends LitElement {
 
         var content = this.innerHTML.trim();
         if (content) {
-            if (!this.info) {
-                this.info = new google.maps.InfoWindow();
-
-                this.openInfoHandler = google.maps.event.addListener(this.marker, 'click', function() {
-                    this.open = true;
-                  }.bind(this));
-
-                  this.closeInfoHandler = google.maps.event.addListener(this.info, 'closeclick', function() {
-                    this.open = false;
-                  }.bind(this));
+            if (this.info) {
+                // Destroy the existing infowindow.  It doesn't make sense to have an empty one.
+                google.maps.event.removeListener(this.openInfoHandler);
+                google.maps.event.removeListener(this.closeInfoHandler);
+                this.info = null;
             }
+            this.info = new google.maps.InfoWindow();
+
+            this.openInfoHandler = google.maps.event.addListener(this.marker, 'click', function () {
+                this.open = true;
+            }.bind(this));
+
+            this.closeInfoHandler = google.maps.event.addListener(this.info, 'closeclick', function () {
+                this.open = false;
+            }.bind(this));
             this.info.setContent(content);
         } else {
             if (this.info) {
-              // Destroy the existing infowindow.  It doesn't make sense to have an empty one.
-              google.maps.event.removeListener(this.openInfoHandler);
-              google.maps.event.removeListener(this.closeInfoHandler);
-              this.info = null;
+                // Destroy the existing infowindow.  It doesn't make sense to have an empty one.
+                google.maps.event.removeListener(this.openInfoHandler);
+                google.maps.event.removeListener(this.closeInfoHandler);
+                this.info = null;
             }
         }
     }
