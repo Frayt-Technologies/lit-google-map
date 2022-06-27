@@ -220,11 +220,11 @@ let LitGoogleMapMarker = class LitGoogleMapMarker extends LitElement {
                 break;
             }
             case 'label': {
-                (_a = this.marker) === null || _a === void 0 ? void 0 : _a.setLabel(newval);
+                (_a = this.marker) === null || _a === void 0 ? void 0 : _a.setLabel(this.label);
                 break;
             }
             case 'z-index': {
-                (_b = this.marker) === null || _b === void 0 ? void 0 : _b.setZIndex(newval);
+                (_b = this.marker) === null || _b === void 0 ? void 0 : _b.setZIndex(this.zIndex);
                 break;
             }
         }
@@ -359,7 +359,7 @@ let LitGoogleMapCircle = class LitGoogleMapCircle extends LitElement {
                 break;
             }
             case 'radius': {
-                (_a = this.circle) === null || _a === void 0 ? void 0 : _a.setRadius(newval);
+                (_a = this.circle) === null || _a === void 0 ? void 0 : _a.setRadius(this.radius);
                 break;
             }
         }

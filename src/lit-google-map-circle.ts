@@ -31,7 +31,7 @@ export class LitGoogleMapCircle extends LitElement implements Shape {
     map : google.maps.Map = null;
     circle : google.maps.Circle = null;
 
-    attributeChangedCallback(name : string, oldval : any, newval : any) {
+    attributeChangedCallback(name : string, oldval : string, newval : string) {
         super.attributeChangedCallback(name, oldval, newval);
         switch (name) {
             case 'center-latitude': {
@@ -43,7 +43,7 @@ export class LitGoogleMapCircle extends LitElement implements Shape {
                 break;
             }
             case 'radius': {
-                this.circle?.setRadius(newval);
+                this.circle?.setRadius(this.radius);
                 break;
             }
         }
