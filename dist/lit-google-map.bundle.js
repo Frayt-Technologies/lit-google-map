@@ -566,6 +566,63 @@
         n$1('lit-google-map-polygon')
     ], exports.LitGoogleMapPolygon);
 
+    exports.LitGoogleMapPolyline = class LitGoogleMapPolyline extends s {
+        constructor() {
+            super(...arguments);
+            this.path = '';
+            this.strokeColor = '#FF0000';
+            this.strokeOpacity = 0.8;
+            this.strokeWeight = 2;
+            this.map = null;
+            this.polyline = null;
+        }
+        attachToMap(map) {
+            this.map = map;
+            this.mapChanged();
+        }
+        mapChanged() {
+            if (this.polyline) {
+                this.polyline.setMap(null);
+                google.maps.event.clearInstanceListeners(this.polyline);
+            }
+            if (this.map && this.map instanceof google.maps.Map) {
+                this.mapReady();
+            }
+        }
+        decodePath(encodedPath) {
+            const path = google.maps.geometry.encoding.decodePath(encodedPath);
+            return path;
+        }
+        mapReady() {
+            this.polyline = new google.maps.Polyline({
+                map: this.map,
+                strokeColor: this.strokeColor,
+                strokeOpacity: this.strokeOpacity,
+                strokeWeight: this.strokeWeight,
+                path: this.decodePath(this.path)
+            });
+        }
+    };
+    __decorate([
+        e({ type: String, attribute: 'encoded-path' }),
+        __metadata("design:type", String)
+    ], exports.LitGoogleMapPolyline.prototype, "path", void 0);
+    __decorate([
+        e({ type: String, attribute: 'stroke-color' }),
+        __metadata("design:type", String)
+    ], exports.LitGoogleMapPolyline.prototype, "strokeColor", void 0);
+    __decorate([
+        e({ type: Number, attribute: 'stroke-opacity' }),
+        __metadata("design:type", Number)
+    ], exports.LitGoogleMapPolyline.prototype, "strokeOpacity", void 0);
+    __decorate([
+        e({ type: Number, attribute: 'stroke-weight' }),
+        __metadata("design:type", Number)
+    ], exports.LitGoogleMapPolyline.prototype, "strokeWeight", void 0);
+    exports.LitGoogleMapPolyline = __decorate([
+        n$1('lit-google-map-polyline')
+    ], exports.LitGoogleMapPolyline);
+
     exports.LitGoogleMap = class LitGoogleMap extends s {
         constructor() {
             super(...arguments);
