@@ -1,5 +1,5 @@
 export class XSelection<TItem> {
-    multi : boolean;
+    multi: boolean;
     selection: Array<TItem>;
     selectCallback: (item: TItem, isSelected: boolean) => void;
 
@@ -14,19 +14,18 @@ export class XSelection<TItem> {
     }
 
     clear(excludes?: Array<TItem>) {
-        this.selection.slice().forEach(item => {
+        this.selection.slice().forEach((item) => {
             if (!excludes || excludes.indexOf(item) < 0)
                 this.setItemSelected(item, false);
-        })
+        });
     }
 
-    isSelected(item: TItem) : boolean {
+    isSelected(item: TItem): boolean {
         return this.selection.indexOf(item) >= 0;
     }
 
     setItemSelected(item: TItem, isSelected: boolean) {
-        if (item == null || isSelected == this.isSelected(item))
-            return;
+        if (item == null || isSelected == this.isSelected(item)) return;
 
         if (isSelected) {
             this.selection.push(item);
@@ -44,10 +43,10 @@ export class XSelection<TItem> {
 
     select(item: TItem) {
         if (this.multi) {
-          this.toggle(item);
+            this.toggle(item);
         } else if (this.get() !== item) {
-          this.setItemSelected(this.get() as TItem, false);
-          this.setItemSelected(item, true);
+            this.setItemSelected(this.get() as TItem, false);
+            this.setItemSelected(item, true);
         }
     }
 

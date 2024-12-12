@@ -39,7 +39,8 @@ class ScriptLoader {
             }
         }
         this.callbackName = callbackName;
-        window[this.callbackName] = this.success.bind(this);
+        window[this.callbackName] =
+            this.success.bind(this);
         this.addScript(url);
     }
     addScript(src) {
@@ -109,7 +110,10 @@ class JsonpLibraryElement extends LitElement {
             this.libraryErrorMessage = null;
             this.libraryLoaded = true;
             if (this.notifyEvent != null) {
-                this.dispatchEvent(new CustomEvent(this.notifyEvent, { detail: detail, composed: true }));
+                this.dispatchEvent(new CustomEvent(this.notifyEvent, {
+                    detail: detail,
+                    composed: true
+                }));
             }
         }
     }
@@ -495,6 +499,59 @@ LitGoogleMapPolygon = __decorate([
     customElement('lit-google-map-polygon')
 ], LitGoogleMapPolygon);
 
+let LitGoogleMapPolyline = class LitGoogleMapPolyline extends LitElement {
+    constructor() {
+        super(...arguments);
+        this.encodedPath = '';
+        this.strokeColor = '#FF0000';
+        this.strokeOpacity = 0.8;
+        this.strokeWeight = 2;
+        this.map = null;
+        this.polyline = null;
+    }
+    attachToMap(map) {
+        this.map = map;
+        this.mapChanged();
+    }
+    mapChanged() {
+        if (this.polyline) {
+            this.polyline.setMap(null);
+            google.maps.event.clearInstanceListeners(this.polyline);
+        }
+        if (this.map && this.map instanceof google.maps.Map) {
+            this.mapReady();
+        }
+    }
+    mapReady() {
+        this.polyline = new google.maps.Polyline({
+            map: this.map,
+            strokeColor: this.strokeColor,
+            strokeOpacity: this.strokeOpacity,
+            strokeWeight: this.strokeWeight,
+            path: google.maps.geometry.encoding.decodePath(this.encodedPath)
+        });
+    }
+};
+__decorate([
+    property({ type: String, attribute: 'encoded-path' }),
+    __metadata("design:type", String)
+], LitGoogleMapPolyline.prototype, "encodedPath", void 0);
+__decorate([
+    property({ type: String, attribute: 'stroke-color' }),
+    __metadata("design:type", String)
+], LitGoogleMapPolyline.prototype, "strokeColor", void 0);
+__decorate([
+    property({ type: Number, attribute: 'stroke-opacity' }),
+    __metadata("design:type", Number)
+], LitGoogleMapPolyline.prototype, "strokeOpacity", void 0);
+__decorate([
+    property({ type: Number, attribute: 'stroke-weight' }),
+    __metadata("design:type", Number)
+], LitGoogleMapPolyline.prototype, "strokeWeight", void 0);
+LitGoogleMapPolyline = __decorate([
+    customElement('lit-google-map-polyline')
+], LitGoogleMapPolyline);
+
 let LitGoogleMap = class LitGoogleMap extends LitElement {
     constructor() {
         super(...arguments);
@@ -548,17 +605,19 @@ let LitGoogleMap = class LitGoogleMap extends LitElement {
     observeMarkers() {
         if (this.markerObserverSet)
             return;
-        this.addEventListener("selector-items-changed", event => { this.updateMarkers(); });
+        this.addEventListener('selector-items-changed', (event) => {
+            this.updateMarkers();
+        });
         this.markerObserverSet = true;
     }
     updateMarkers() {
         this.observeMarkers();
-        var markersSelector = this.shadowRoot.getElementById("markers-selector");
+        var markersSelector = this.shadowRoot.getElementById('markers-selector');
         if (!markersSelector)
             return;
         var newMarkers = markersSelector.items;
         if (this.markers && newMarkers.length === this.markers.length) {
-            var added = newMarkers.filter(m => {
+            var added = newMarkers.filter((m) => {
                 return this.markers && this.markers.indexOf(m) === -1;
             });
             if (added.length == 0)
@@ -571,7 +630,7 @@ let LitGoogleMap = class LitGoogleMap extends LitElement {
         }
     }
     updateShapes() {
-        var shapesSelector = this.shadowRoot.getElementById("shapes-selector");
+        var shapesSelector = this.shadowRoot.getElementById('shapes-selector');
         if (!shapesSelector)
             return;
         this.shapes = shapesSelector.items;
@@ -591,36 +650,36 @@ let LitGoogleMap = class LitGoogleMap extends LitElement {
             this.map.setCenter(latLngBounds.getCenter());
         }
     }
-    deselectMarker(event) {
-    }
-    deselectShape(event) {
-    }
+    deselectMarker(event) { }
+    deselectShape(event) { }
     render() {
         return html `
-            <lit-google-maps-api 
-                id="api" 
-                api-key="${this.apiKey}" 
+            <lit-google-maps-api
+                id="api"
+                api-key="${this.apiKey}"
                 version="${this.version}"
                 language="${this.language}"
                 map-id="${this.mapId}"
-                @api-load=${() => this.mapApiLoaded()}>
+                @api-load=${() => this.mapApiLoaded()}
+            >
             </lit-google-maps-api>
-            <lit-selector 
+            <lit-selector
                 id="markers-selector"
                 selected-attribute="open"
                 activate-event="google-map-marker-open"
-                @google-map-marker-close=${(e) => this.deselectMarker(e)}>
-                    <slot id="markers" name="markers"></slot>
+                @google-map-marker-close=${(e) => this.deselectMarker(e)}
+            >
+                <slot id="markers" name="markers"></slot>
             </lit-selector>
-            <lit-selector 
+            <lit-selector
                 id="shapes-selector"
                 selected-attribute="open"
                 activate-event="google-map-shape-open"
-                @google-map-shape-close=${(e) => this.deselectShape(e)}>
-                    <slot id="shapes" name="shapes"></slot>
+                @google-map-shape-close=${(e) => this.deselectShape(e)}
+            >
+                <slot id="shapes" name="shapes"></slot>
             </lit-selector>
-            <div id="map">
-            </div>
+            <div id="map"></div>
         `;
     }
 };
@@ -684,7 +743,7 @@ class XSelection {
         return this.multi ? this.selection.slice() : this.selection[0];
     }
     clear(excludes) {
-        this.selection.slice().forEach(item => {
+        this.selection.slice().forEach((item) => {
             if (!excludes || excludes.indexOf(item) < 0)
                 this.setItemSelected(item, false);
         });
@@ -736,10 +795,13 @@ let LitSelector = class LitSelector extends LitElement {
     }
     connectedCallback() {
         super.connectedCallback();
-        this.addEventListener('slotchange', event => {
+        this.addEventListener('slotchange', (event) => {
             event.stopPropagation();
             this.updateItems();
-            this.dispatchEvent(new CustomEvent("selector-items-changed", { detail: {}, composed: true }));
+            this.dispatchEvent(new CustomEvent('selector-items-changed', {
+                detail: {},
+                composed: true
+            }));
         });
         this.addListener(this.activateEvent);
     }
@@ -758,13 +820,14 @@ let LitSelector = class LitSelector extends LitElement {
     }
     applySelection(item, isSelected) {
         if (this.selectedAttribute && item instanceof Element) {
-            if (isSelected != item.hasAttribute(this.selectedAttribute))
+            if (isSelected !=
+                item.hasAttribute(this.selectedAttribute))
                 item.toggleAttribute(this.selectedAttribute);
         }
     }
     updateItems() {
         var _a;
-        var slotElement = this.querySelector("slot");
+        var slotElement = this.querySelector('slot');
         this._items = (_a = slotElement === null || slotElement === void 0 ? void 0 : slotElement.assignedNodes()) !== null && _a !== void 0 ? _a : [];
     }
     addListener(eventName) {
@@ -787,7 +850,11 @@ let LitSelector = class LitSelector extends LitElement {
         }
     }
     itemActivate(value, item) {
-        if (this.dispatchEvent(new CustomEvent('selector-item-activate', { detail: { selected: value, item: item }, composed: true, cancelable: true })))
+        if (this.dispatchEvent(new CustomEvent('selector-item-activate', {
+            detail: { selected: value, item: item },
+            composed: true,
+            cancelable: true
+        })))
             this.select(value);
     }
     select(value) {
@@ -808,7 +875,7 @@ let LitSelector = class LitSelector extends LitElement {
         }
     }
     valueToItem(value) {
-        return (value == null) ? null : this._items[this.valueToIndex(value)];
+        return value == null ? null : this._items[this.valueToIndex(value)];
     }
     valueToIndex(value) {
         return Number(value);
@@ -836,4 +903,4 @@ LitSelector = __decorate([
     customElement('lit-selector')
 ], LitSelector);
 
-export { LitGoogleMap, LitGoogleMapCircle, LitGoogleMapMarker, LitGoogleMapPolygon, LitGoogleMapsApi, LitSelector };
+export { LitGoogleMap, LitGoogleMapCircle, LitGoogleMapMarker, LitGoogleMapPolygon, LitGoogleMapPolyline, LitGoogleMapsApi, LitSelector };

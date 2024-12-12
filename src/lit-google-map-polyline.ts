@@ -2,16 +2,10 @@ import {LitElement} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {Shape} from './shape';
 
-@customElement('lit-google-map-polygon')
-export class LitGoogleMapPolygon extends LitElement implements Shape {
-    @property({type: Array})
-    paths: object[] = [];
-
-    @property({type: String, attribute: 'fill-color'})
-    fillColor: string = '#FF0000';
-
-    @property({type: Number, attribute: 'fill-opacity'})
-    fillOpacity: number = 0.35;
+@customElement('lit-google-map-polyline')
+export class LitGoogleMapPolyline extends LitElement implements Shape {
+    @property({type: String, attribute: 'encoded-path'})
+    encodedPath: string = '';
 
     @property({type: String, attribute: 'stroke-color'})
     strokeColor: string = '#FF0000';
@@ -23,7 +17,7 @@ export class LitGoogleMapPolygon extends LitElement implements Shape {
     strokeWeight: number = 2;
 
     map: google.maps.Map = null;
-    polygon: google.maps.Polygon = null;
+    polyline: google.maps.Polyline = null;
 
     attachToMap(map: google.maps.Map): void {
         this.map = map;
@@ -31,10 +25,10 @@ export class LitGoogleMapPolygon extends LitElement implements Shape {
     }
 
     mapChanged() {
-        // Polygon will be rebuilt, so disconnect existing one from old map and listeners.
-        if (this.polygon) {
-            this.polygon.setMap(null);
-            google.maps.event.clearInstanceListeners(this.polygon);
+        // Polyline will be rebuilt, so disconnect existing one from old map and listeners.
+        if (this.polyline) {
+            this.polyline.setMap(null);
+            google.maps.event.clearInstanceListeners(this.polyline);
         }
 
         if (this.map && this.map instanceof google.maps.Map) {
@@ -43,14 +37,12 @@ export class LitGoogleMapPolygon extends LitElement implements Shape {
     }
 
     mapReady() {
-        this.polygon = new google.maps.Polygon({
+        this.polyline = new google.maps.Polyline({
             map: this.map,
             strokeColor: this.strokeColor,
             strokeOpacity: this.strokeOpacity,
             strokeWeight: this.strokeWeight,
-            fillColor: this.fillColor,
-            fillOpacity: this.fillOpacity,
-            paths: this.paths
+            path: google.maps.geometry.encoding.decodePath(this.encodedPath)
         });
     }
 }

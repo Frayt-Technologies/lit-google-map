@@ -1,37 +1,37 @@
 import {LitElement} from 'lit';
-import {customElement, property} from 'lit/decorators.js'
+import {customElement, property} from 'lit/decorators.js';
 import {Shape} from './shape';
 
 @customElement('lit-google-map-circle')
 export class LitGoogleMapCircle extends LitElement implements Shape {
-    @property({type : Number, attribute: 'center-latitude'})
+    @property({type: Number, attribute: 'center-latitude'})
     centerLatitude: number = -34.397;
 
-    @property({type : Number, attribute: 'center-longitude'})
+    @property({type: Number, attribute: 'center-longitude'})
     centerLongitude: number = 150.644;
 
-    @property({type : Number})
+    @property({type: Number})
     radius: number = 100000;
 
-    @property({type : String, attribute: 'fill-color'})
+    @property({type: String, attribute: 'fill-color'})
     fillColor: string = '#FF0000';
 
-    @property({type : Number, attribute: 'fill-opacity'})
+    @property({type: Number, attribute: 'fill-opacity'})
     fillOpacity: number = 0.35;
 
-    @property({type : String, attribute: 'stroke-color'})
+    @property({type: String, attribute: 'stroke-color'})
     strokeColor: string = '#FF0000';
 
-    @property({type : Number, attribute: 'stroke-opacity'})
+    @property({type: Number, attribute: 'stroke-opacity'})
     strokeOpacity: number = 0.8;
 
-    @property({type : Number, attribute: 'stroke-weight'})
+    @property({type: Number, attribute: 'stroke-weight'})
     strokeWeight: number = 2;
 
-    map : google.maps.Map = null;
-    circle : google.maps.Circle = null;
+    map: google.maps.Map = null;
+    circle: google.maps.Circle = null;
 
-    attributeChangedCallback(name : string, oldval : string, newval : string) {
+    attributeChangedCallback(name: string, oldval: string, newval: string) {
         super.attributeChangedCallback(name, oldval, newval);
         switch (name) {
             case 'center-latitude': {
@@ -50,7 +50,9 @@ export class LitGoogleMapCircle extends LitElement implements Shape {
     }
 
     updateCenter() {
-        this.circle?.setCenter(new google.maps.LatLng(this.centerLatitude, this.centerLongitude));
+        this.circle?.setCenter(
+            new google.maps.LatLng(this.centerLatitude, this.centerLongitude)
+        );
     }
 
     attachToMap(map: google.maps.Map): void {
@@ -83,6 +85,6 @@ export class LitGoogleMapCircle extends LitElement implements Shape {
                 lng: this.centerLongitude
             },
             radius: this.radius
-          });
+        });
     }
 }
