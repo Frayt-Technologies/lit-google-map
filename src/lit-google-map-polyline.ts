@@ -5,7 +5,7 @@ import {Shape} from './shape';
 @customElement('lit-google-map-polyline')
 export class LitGoogleMapPolyline extends LitElement implements Shape {
     @property({type: String, attribute: 'encoded-path'})
-    path: string = '';
+    encodedPath: string = '';
 
     @property({type: String, attribute: 'stroke-color'})
     strokeColor: string = '#FF0000';
@@ -36,18 +36,13 @@ export class LitGoogleMapPolyline extends LitElement implements Shape {
         }
     }
 
-    decodePath(encodedPath: string): Array<google.maps.LatLng> {
-        const path = google.maps.geometry.encoding.decodePath(encodedPath);
-        return path;
-    }
-
     mapReady() {
         this.polyline = new google.maps.Polyline({
             map: this.map,
             strokeColor: this.strokeColor,
             strokeOpacity: this.strokeOpacity,
             strokeWeight: this.strokeWeight,
-            path: this.decodePath(this.path)
+            path: google.maps.geometry.encoding.decodePath(this.encodedPath)
         });
     }
 }
