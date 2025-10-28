@@ -200,6 +200,7 @@ let LitGoogleMapMarker = class LitGoogleMapMarker extends LitElement {
         super(...arguments);
         this.latitude = 0;
         this.longitude = 0;
+        this.title = null;
         this.label = null;
         this.zIndex = 0;
         this.open = false;
@@ -208,7 +209,7 @@ let LitGoogleMapMarker = class LitGoogleMapMarker extends LitElement {
         this.marker = null;
     }
     attributeChangedCallback(name, oldval, newval) {
-        var _a, _b;
+        var _a, _b, _c, _d;
         super.attributeChangedCallback(name, oldval, newval);
         switch (name) {
             case 'open': {
@@ -229,6 +230,14 @@ let LitGoogleMapMarker = class LitGoogleMapMarker extends LitElement {
             }
             case 'z-index': {
                 (_b = this.marker) === null || _b === void 0 ? void 0 : _b.setZIndex(this.zIndex);
+                break;
+            }
+            case 'title': {
+                (_c = this.info) === null || _c === void 0 ? void 0 : _c.setHeaderContent(this.title);
+                break;
+            }
+            case 'icon': {
+                (_d = this.marker) === null || _d === void 0 ? void 0 : _d.setIcon(this.parseIcon());
                 break;
             }
         }
@@ -265,7 +274,7 @@ let LitGoogleMapMarker = class LitGoogleMapMarker extends LitElement {
     mapReady() {
         this.marker = new google.maps.Marker({
             map: this.map,
-            icon: this.icon,
+            icon: this.parseIcon(),
             position: {
                 lat: this.latitude,
                 lng: this.longitude
@@ -274,6 +283,20 @@ let LitGoogleMapMarker = class LitGoogleMapMarker extends LitElement {
             zIndex: this.zIndex
         });
         this.contentChanged();
+    }
+    parseIcon() {
+        try {
+            const icon = JSON.parse(this.icon);
+            switch (icon.path) {
+                case 'CIRCLE':
+                    icon.path = "M 0,-10 a 10,10 0 1,0 0,20 a 10,10 0 1,0 0,-20";
+                    break;
+            }
+            return icon;
+        }
+        catch (e) {
+            return this.icon;
+        }
     }
     contentChanged() {
         if (this.contentObserver)
@@ -295,6 +318,7 @@ let LitGoogleMapMarker = class LitGoogleMapMarker extends LitElement {
                 }.bind(this));
             }
             this.info.setContent(content);
+            this.info.setHeaderContent(this.title);
         }
         else {
             if (this.info) {
@@ -313,6 +337,10 @@ __decorate([
     property({ type: Number, reflect: true }),
     __metadata("design:type", Number)
 ], LitGoogleMapMarker.prototype, "longitude", void 0);
+__decorate([
+    property({ type: String, reflect: true }),
+    __metadata("design:type", String)
+], LitGoogleMapMarker.prototype, "title", void 0);
 __decorate([
     property({ type: String, reflect: true }),
     __metadata("design:type", String)
@@ -510,10 +538,34 @@ let LitGoogleMapPolyline = class LitGoogleMapPolyline extends LitElement {
         this.polyline = null;
     }
     attachToMap(map) {
+        console.log('attachToMap', map);
         this.map = map;
         this.mapChanged();
     }
+    attributeChangedCallback(name, oldval, newval) {
+        var _a, _b, _c, _d;
+        super.attributeChangedCallback(name, oldval, newval);
+        switch (name) {
+            case 'encoded-path': {
+                (_a = this.polyline) === null || _a === void 0 ? void 0 : _a.setPath(google.maps.geometry.encoding.decodePath(this.encodedPath));
+                break;
+            }
+            case 'stroke-color': {
+                (_b = this.polyline) === null || _b === void 0 ? void 0 : _b.setOptions({ strokeColor: this.strokeColor });
+                break;
+            }
+            case 'stroke-opacity': {
+                (_c = this.polyline) === null || _c === void 0 ? void 0 : _c.setOptions({ strokeOpacity: this.strokeOpacity });
+                break;
+            }
+            case 'stroke-weight': {
+                (_d = this.polyline) === null || _d === void 0 ? void 0 : _d.setOptions({ strokeWeight: this.strokeWeight });
+                break;
+            }
+        }
+    }
     mapChanged() {
+        console.log('mapChanged', this.map);
         if (this.polyline) {
             this.polyline.setMap(null);
             google.maps.event.clearInstanceListeners(this.polyline);
@@ -556,7 +608,7 @@ let LitGoogleMap = class LitGoogleMap extends LitElement {
     constructor() {
         super(...arguments);
         this.apiKey = '';
-        this.version = '3.48';
+        this.version = '3.58.1';
         this.styles = {};
         this.zoom = 8;
         this.fitToMarkers = false;
@@ -607,6 +659,7 @@ let LitGoogleMap = class LitGoogleMap extends LitElement {
             return;
         this.addEventListener('selector-items-changed', (event) => {
             this.updateMarkers();
+            this.updateShapes();
         });
         this.markerObserverSet = true;
     }

@@ -10,6 +10,9 @@ export class LitGoogleMapMarker extends LitElement {
     longitude: number = 0;
 
     @property({type: String, reflect: true})
+    title: string | null = null;
+
+    @property({type: String, reflect: true})
     label: string | null = null;
 
     @property({type: Number, reflect: true, attribute: 'z-index'})
@@ -49,6 +52,14 @@ export class LitGoogleMapMarker extends LitElement {
             }
             case 'z-index': {
                 this.marker?.setZIndex(this.zIndex);
+                break;
+            }
+            case 'title': {
+                this.info?.setHeaderContent(this.title);
+                break;
+            }
+            case 'icon': {
+                this.marker?.setIcon(this.parseIcon());
                 break;
             }
         }
@@ -110,7 +121,15 @@ export class LitGoogleMapMarker extends LitElement {
 
     parseIcon() {
         try {
-            return JSON.parse(this.icon)
+            const icon = JSON.parse(this.icon);
+
+            switch (icon.path) {
+                case 'CIRCLE':
+                    icon.path = "M 0,-10 a 10,10 0 1,0 0,20 a 10,10 0 1,0 0,-20";
+                    break;
+            }
+            
+            return icon;
         } catch (e) {
             return this.icon;
         }
@@ -149,6 +168,7 @@ export class LitGoogleMapMarker extends LitElement {
                 );
             }
             this.info.setContent(content);
+            this.info.setHeaderContent(this.title);
         } else {
             if (this.info) {
                 // Destroy the existing infowindow.  It doesn't make sense to have an empty one.

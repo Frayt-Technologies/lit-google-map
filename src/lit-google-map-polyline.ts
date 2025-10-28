@@ -24,6 +24,28 @@ export class LitGoogleMapPolyline extends LitElement implements Shape {
         this.mapChanged();
     }
 
+    attributeChangedCallback(name: string, oldval: string, newval: string) {
+        super.attributeChangedCallback(name, oldval, newval);
+        switch (name) {
+            case 'encoded-path': {
+                this.polyline?.setPath(google.maps.geometry.encoding.decodePath(this.encodedPath));
+                break;
+            }
+            case 'stroke-color': {
+                this.polyline?.setOptions({strokeColor: this.strokeColor});
+                break;
+            }
+            case 'stroke-opacity': {
+                this.polyline?.setOptions({strokeOpacity: this.strokeOpacity});
+                break;
+            }
+            case 'stroke-weight': {
+                this.polyline?.setOptions({strokeWeight: this.strokeWeight});
+                break;
+            }
+        }
+    }
+
     mapChanged() {
         // Polyline will be rebuilt, so disconnect existing one from old map and listeners.
         if (this.polyline) {

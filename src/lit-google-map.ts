@@ -17,7 +17,7 @@ export class LitGoogleMap extends LitElement {
      * Version of the Google Maps API to use.
      */
     @property({type: String})
-    version: string = '3.48';
+    version: string = '3.58.1';
 
     /**
      * If set, custom styles can be applied to the map.
@@ -119,6 +119,7 @@ export class LitGoogleMap extends LitElement {
 
         this.addEventListener('selector-items-changed', (event) => {
             this.updateMarkers();
+            this.updateShapes();
         });
         this.markerObserverSet = true;
     }
@@ -144,7 +145,7 @@ export class LitGoogleMap extends LitElement {
         this.markers = newMarkers;
 
         this.attachChildrenToMap(this.markers);
-
+        
         if (this.fitToMarkers) {
             this.fitToMarkersChanged();
         }
