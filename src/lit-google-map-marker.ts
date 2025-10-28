@@ -96,7 +96,7 @@ export class LitGoogleMapMarker extends LitElement {
     mapReady() {
         this.marker = new google.maps.Marker({
             map: this.map,
-            icon: this.icon,
+            icon: this.parseIcon(),
             position: {
                 lat: this.latitude,
                 lng: this.longitude
@@ -106,6 +106,14 @@ export class LitGoogleMapMarker extends LitElement {
         });
 
         this.contentChanged();
+    }
+
+    parseIcon() {
+        try {
+            return JSON.parse(this.icon)
+        } catch (e) {
+            return this.icon;
+        }
     }
 
     contentChanged() {
