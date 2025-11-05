@@ -609,7 +609,6 @@
             this.polyline = null;
         }
         attachToMap(map) {
-            console.log('attachToMap', map);
             this.map = map;
             this.mapChanged();
         }
@@ -636,7 +635,6 @@
             }
         }
         mapChanged() {
-            console.log('mapChanged', this.map);
             if (this.polyline) {
                 this.polyline.setMap(null);
                 google.maps.event.clearInstanceListeners(this.polyline);
@@ -679,7 +677,7 @@
         constructor() {
             super(...arguments);
             this.apiKey = '';
-            this.version = '3.58.1';
+            this.version = '3.60.12';
             this.styles = {};
             this.zoom = 8;
             this.fitToMarkers = false;

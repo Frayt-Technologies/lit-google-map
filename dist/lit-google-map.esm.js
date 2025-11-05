@@ -538,7 +538,6 @@ let LitGoogleMapPolyline = class LitGoogleMapPolyline extends LitElement {
         this.polyline = null;
     }
     attachToMap(map) {
-        console.log('attachToMap', map);
         this.map = map;
         this.mapChanged();
     }
@@ -565,7 +564,6 @@ let LitGoogleMapPolyline = class LitGoogleMapPolyline extends LitElement {
         }
     }
     mapChanged() {
-        console.log('mapChanged', this.map);
         if (this.polyline) {
             this.polyline.setMap(null);
             google.maps.event.clearInstanceListeners(this.polyline);
@@ -608,7 +606,7 @@ let LitGoogleMap = class LitGoogleMap extends LitElement {
     constructor() {
         super(...arguments);
         this.apiKey = '';
-        this.version = '3.58.1';
+        this.version = '3.60.12';
         this.styles = {};
         this.zoom = 8;
         this.fitToMarkers = false;
